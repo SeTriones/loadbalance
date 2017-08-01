@@ -106,6 +106,7 @@ func (lb *LoadBalancer) Get() (string, error) {
 			return s.Addr, nil
 		} else {
 			if t.Sub(s.DownTime) > lb.updateInterval*time.Duration(10) {
+				log.Infof("%s is mark as active", s.Addr)
 				s.Down = false
 			}
 		}
@@ -155,6 +156,7 @@ func (lb *LoadBalancer) MarkFail(addr string) {
 	if ok {
 		s.FailCnt = s.FailCnt + 1
 		if s.FailCnt >= lb.failThreshold {
+			log.Infof("%s is marked as down", addr)
 			s.Down = true
 			s.DownTime = time.Now()
 			s.FailCnt = 0
