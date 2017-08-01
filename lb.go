@@ -109,6 +109,7 @@ func (lb *LoadBalancer) Get() (string, error) {
 				log.Infof("%s is mark as active", s.Addr)
 				s.Down = false
 			}
+			return s.Addr, nil
 		}
 	}
 }
