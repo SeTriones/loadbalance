@@ -83,6 +83,7 @@ func (lb *LoadBalancer) Get() (string, error) {
 			addrs, err := lb.updater.Update()
 			if err != nil {
 				log.Errorf("update fail,err=%v", err)
+				lb.updating = false
 			} else {
 				lb.Set(addrs)
 			}
