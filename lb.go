@@ -104,7 +104,7 @@ func (lb *LoadBalancer) Get() (string, error) {
 	for {
 		s := lb.serverList[lb.next]
 		lb.next = (lb.next + 1) % lb.cnt
-		if lb.next == start {
+		if lb.next == start && lb.cnt > 1 {
 			return s.Addr, errors.New("no active server")
 		}
 		if !s.Down {
