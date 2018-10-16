@@ -40,7 +40,7 @@ type LoadBalancer struct {
 	activeCnt      int
 }
 
-func NewLoadBalancer(u Updater, interval time.Duration, maxErr int) *LoadBalancer {
+func NewLoadBalancer(u Updater, interval time.Duration, maxErr int, randStart bool) *LoadBalancer {
 	addrs, err := u.Update()
 	if err != nil {
 		log.Errorf("init backend addresses fail")
@@ -58,13 +58,17 @@ func NewLoadBalancer(u Updater, interval time.Duration, maxErr int) *LoadBalance
 		servers[i] = s
 		index[addrs[i]] = s
 	}
-	randNext := rand.Int31n(int32(l))
+	next := 0
+	if randStart {
+		randNext := rand.Int31n(int32(l))
+		next = int(randNext)
+	}
 	lb := &LoadBalancer{
 		mu:             sync.Mutex{},
 		serverList:     servers,
 		serverIndex:    index,
-		next:           0,
-		cnt:            int(randNext),
+		next:           next,
+		cnt:            l,
 		lastUpdate:     time.Now(),
 		updateInterval: interval,
 		updater:        u,
