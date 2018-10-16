@@ -2,6 +2,7 @@ package loadbalance
 
 import (
 	"errors"
+	"math/rand"
 	"sync"
 	"time"
 
@@ -57,12 +58,13 @@ func NewLoadBalancer(u Updater, interval time.Duration, maxErr int) *LoadBalance
 		servers[i] = s
 		index[addrs[i]] = s
 	}
+	randNext := rand.Int31n(int32(l))
 	lb := &LoadBalancer{
 		mu:             sync.Mutex{},
 		serverList:     servers,
 		serverIndex:    index,
 		next:           0,
-		cnt:            l,
+		cnt:            int(randNext),
 		lastUpdate:     time.Now(),
 		updateInterval: interval,
 		updater:        u,
